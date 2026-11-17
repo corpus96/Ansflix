@@ -39,7 +39,7 @@ ansible-playbook site.yml
 ## Demo (`docs/Demo/`)
 
 ### Media File on the Managed VM
-![Media file in server](docs/Demo/File_In_Server_Demo.png)
+![Media file in remote ubuntu server](docs/Demo/File_In_Server_Demo.png)
 
 ### Video Walkthroughs
 - **Stack & Dashboard Demo**: [`docs/Demo/Demo.mov`](docs/Demo/Demo.mov)
