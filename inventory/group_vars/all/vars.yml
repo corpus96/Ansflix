@@ -4,7 +4,7 @@ media_subdirs:
   - videos
 min_free_gb: 5
 
-#jellyfin and kuma variables
+# jellyfin and kuma variables
 jellyfin_port: 8096
 kuma_port: 3001
 jellyfin_admin_password: "{{ vault_jellyfin_admin_password }}"

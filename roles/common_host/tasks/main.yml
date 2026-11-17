@@ -2,13 +2,13 @@
 - name: Install packages for Debian family
   ansible.builtin.apt:
     name:
-       - docker.io
-       - python3-docker
-       - curl
+      - docker.io
+      - python3-docker
+      - curl
     state: present
     update_cache: true
     cache_valid_time: 3600
-  #when if a conditional of the above statements
+  # when if a conditional of the above statements
   when: ansible_facts['os_family'] == "Debian"
 
 - name: Ensure Docker is enabled and running
@@ -34,9 +34,9 @@
 
 - name: Create the media directories
   ansible.builtin.file:
-     path: "{{ media_root }}/{{ item }}"
-     state: directory
-     owner: "{{ ansible_user | default('root') }}"
-     group: "{{ ansible_user | default('root') }}"
-     mode: "0755"
+    path: "{{ media_root }}/{{ item }}"
+    state: directory
+    owner: "{{ ansible_user | default('root') }}"
+    group: "{{ ansible_user | default('root') }}"
+    mode: "0755"
   loop: "{{ media_subdirs }}"

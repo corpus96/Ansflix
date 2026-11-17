@@ -1,9 +1,9 @@
 ---
 - name: Create Jellyfin directories
   ansible.builtin.file:
-     path: "{{ item }}"
-     state: directory
-     mode: "0755"
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
   loop:
     - "{{ jellyfin_config_dir }}/config"
     - "{{ jellyfin_config_dir }}/cache"
@@ -16,3 +16,18 @@
     group: root
     mode: "0600"
   notify: Restart Jellyfin
+
+- name: Run Jellyfin container
+  community.docker.docker_container:
+    name: jellyfin
+    image: "{{ jellyfin_image }}"
+    state: started
+    restart_policy: unless-stopped
+    memory: "{{ jellyfin_memory_mb }}m"
+    env_file: "{{ jellyfin_env_file }}"
+    ports:
+      - "{{ jellyfin_port }}:8096"
+    volumes:
+      - "{{ jellyfin_config_dir }}/config:/config"
+      - "{{ jellyfin_config_dir }}/cache:/cache"
+      - "{{ media_root }}:/media"

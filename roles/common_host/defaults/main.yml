@@ -2,4 +2,4 @@
 min_free_gb: 5
 media_root: /srv/ansibleflix/media
 media_subdirs:
-  -movies
+  - movies

@@ -1,0 +1,45 @@
+---
+# Entry point file
+- name: Deploy AnsibleFlix (Jellyfin + Uptime Kuma)
+  hosts: media_servers
+  become: true
+  roles:
+    - common_host
+    - jellyfin_media
+    - uptime_watchdog
+
+  # Tasks that run after all roles finish
+  post_tasks:
+    - name: Query Jellyfin health endpoint
+      ansible.builtin.uri:
+        url: "http://localhost:{{ jellyfin_port }}/health"
+
+        # Store the response body
+        return_content: true
+
+      register: jellyfin_health
+      retries: 5
+      delay: 3
+      until: jellyfin_health.status == 200
+
+    - name: Query Uptime Kuma
+      ansible.builtin.uri:
+        url: "http://localhost:{{ kuma_port }}"
+      register: kuma_health
+      retries: 5
+      delay: 3
+      until: kuma_health.status == 200
+
+    - name: Check movies directory
+      ansible.builtin.stat:
+        path: "{{ media_root }}/movies"
+
+      # Store the result into ansible.builtin.stat:
+      register: movies_dir
+
+    - name: Assert stack is healthly
+      ansible.builtin.assert:
+        # All conditions must be true
+        that:
+          - "'Healthy' in jellyfin_health.content"
+          - movies_dir.stat.isdir

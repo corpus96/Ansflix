@@ -1,0 +1,31 @@
+---
+- name: Create Uptime Kuma data directory
+  ansible.builtin.file:
+    path: "{{ kuma_data_dir }}"
+
+- name: Run Uptime Kuma container
+  community.docker.docker_container:
+    name: uptime-kuma
+    image: "{{ kuma_image }}"
+    state: started
+    restart_policy: unless-stopped
+    ports:
+      - "{{ kuma_port }}:3001"
+    volumes:
+      - "{{ kuma_data_dir }}/data:/app/data"
+
+- name: Probe Jellyfin health
+  ansible.builtin.uri:
+    url: "http://{{ ansible_facts['default_ipv4']['address'] }}:{{ jellyfin_port }}/health"
+    status_code: 200
+  register: jellyfin_health
+  retries: 10
+  delay: 3
+  until: jellyfin_health.status == 200
+
+- name: Show live URLs
+  ansible.builtin.debug:
+    msg:
+      - "Jellyfin:    http://{{ ansible_facts['default_ipv4']['address'] }}:{{ jellyfin_port }}"
+      - "Uptime Kuma: http://{{ ansible_facts['default_ipv4']['address'] }}:{{ kuma_port }}"
+  when: jellyfin_health.status == 200

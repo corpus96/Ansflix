@@ -1,4 +1,4 @@
 ---
-#Avoid verbose debugging
+# Avoid verbose debugging
 skip_list:
-    - var-naming[no-role-prefix]
+  - var-naming[no-role-prefix]
