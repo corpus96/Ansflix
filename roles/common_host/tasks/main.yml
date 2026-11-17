@@ -1,0 +1,42 @@
+---
+- name: Install packages for Debian family
+  ansible.builtin.apt:
+    name:
+       - docker.io
+       - python3-docker
+       - curl
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+  #when if a conditional of the above statements
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Ensure Docker is enabled and running
+  ansible.builtin.service:
+    name: docker.io
+    state: started
+    enabled: true
+
+- name: Check free disk space on /
+  ansible.builtin.shell: set -o pipefail && df -BG --output=avail / | tail -n 1
+  args:
+    executable: /bin/bash
+  register: disk_check
+  changed_when: false
+  check_mode: false
+
+- name: Assert enough free disk space
+  ansible.builtin.assert:
+    that:
+      - (disk_check.stdout | regex_replace('[^0-9]', '') | int) >= (min_free_gb | int)
+    fail_msg: "Only {{ disk_check.stdout | trim }} free; need {{ min_free_gb }}G."
+    success_msg: "Disk space OK: {{ disk_check.stdout | trim }} free."
+
+- name: Create the media directories
+  ansible.builtin.file:
+     path: "{{ media_root }}/{{ item }}"
+     state: directory
+     owner: "{{ ansible_user | default('root') }}"
+     group: "{{ ansible_user | default('root') }}"
+     mode: "0755"
+  loop: "{{ media_subdirs }}"

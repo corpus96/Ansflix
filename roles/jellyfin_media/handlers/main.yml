@@ -1,0 +1,6 @@
+---
+- name: Restart Jellyfin
+  community.docker.docker_container:
+    name: jellyfin
+    state: started
+    restart: true
