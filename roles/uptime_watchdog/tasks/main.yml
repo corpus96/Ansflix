@@ -2,6 +2,8 @@
 - name: Create Uptime Kuma data directory
   ansible.builtin.file:
     path: "{{ kuma_data_dir }}"
+    state: directory
+    mode: "0755"
 
 - name: Run Uptime Kuma container
   community.docker.docker_container:

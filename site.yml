@@ -30,16 +30,16 @@
       delay: 3
       until: kuma_health.status == 200
 
-    - name: Check movies directory
+    - name: Check videos directory
       ansible.builtin.stat:
-        path: "{{ media_root }}/movies"
+        path: "{{ media_root }}/videos"
 
       # Store the result into ansible.builtin.stat:
-      register: movies_dir
+      register: videos_dir
 
-    - name: Assert stack is healthly
+    - name: Assert stack is healthy
       ansible.builtin.assert:
         # All conditions must be true
         that:
           - "'Healthy' in jellyfin_health.content"
-          - movies_dir.stat.isdir
+          - videos_dir.stat.isdir

@@ -1,6 +1,6 @@
 ---
 jellyfin_port: 8096
-jeffyfin_image: jellyfin/jellyfin:latest
+jellyfin_image: jellyfin/jellyfin:latest
 jellyfin_config_dir: /srv/ansibleflix/jellyfin
 jellyfin_env_file: /srv/ansibleflix/ansibleflix.env
 media_root: /srv/ansibleflix/media
